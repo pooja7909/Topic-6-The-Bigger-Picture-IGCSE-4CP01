@@ -216,7 +216,7 @@
 
   <div class="tabs-nav">
     <button class="tab-btn active" data-tab="mindmap">📋 Mind Map</button>
-    <button class="tab-btn" data-tab="notes">📖 Topic Notes</button>
+    <button class="tab-btn" data-tab="notes">📖 Topic Wise Notes</button>
     <button class="tab-btn" data-tab="quiz">⚡ Quick Quiz</button>
     <button class="tab-btn" data-tab="exam">📝 Exam Questions</button>
     <button class="tab-btn" data-tab="activities">🎮 Activities</button>
@@ -1670,7 +1670,7 @@ function buildQuiz() {
   card.innerHTML = `
     <div class="quiz-q-num">Question ${qIdx+1} of ${quizData.length}</div>
     <div class="quiz-question">${q.q}</div>
-    <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQ(this,${i},${q.ans},'${encodeURIComponent(q.exp)}')">${o}</button>`).join('')}</div>
+    <div class="quiz-options" data-correct="${q.ans}" data-exp="${encodeURIComponent(q.exp)}">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQ(this,${i})">${o}</button>`).join('')}</div>
     <div class="quiz-feedback" id="qfb"></div>
     <div class="quiz-nav"><button class="btn btn-blue" id="qnext" style="display:none;" onclick="nextQ()">Next →</button></div>
   `;
@@ -1678,11 +1678,13 @@ function buildQuiz() {
   updateProgress();
 }
 
-function answerQ(btn, chosen, correct, expEnc) {
+function answerQ(btn, chosen) {
   if (answered) return;
   answered = true;
-  const exp = decodeURIComponent(expEnc);
-  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  const optsContainer = btn.parentElement;
+  const correct = parseInt(optsContainer.dataset.correct);
+  const exp = decodeURIComponent(optsContainer.dataset.exp);
+  const opts = optsContainer.querySelectorAll('.quiz-opt');
   opts.forEach(b => b.disabled = true);
   opts[correct].classList.add('correct');
   const fb = document.getElementById('qfb');
